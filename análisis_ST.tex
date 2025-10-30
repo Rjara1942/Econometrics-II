@@ -1,0 +1,279 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Análisis de Series Temporales},
+  pdfauthor={Ricardo Jara},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Análisis de Series Temporales}
+\author{Ricardo Jara}
+\date{2025-07-22}
+
+\begin{document}
+\maketitle
+
+\section{Instalar si es necesario:}\label{instalar-si-es-necesario}
+
+\section{install.packages(c(``forecast'', ``tseries'', ``readxl'',
+``fpp2''))}\label{install.packagescforecast-tseries-readxl-fpp2}
+
+library(forecast) library(tseries) library(readxl) library(fpp2) \#
+incluye forecast, ggplot2, tseries, datasets, etc.
+
+\section{Crear una Serie Temporal
+Simulada}\label{crear-una-serie-temporal-simulada}
+
+\section{Generamos 100 observaciones aleatorias normales con media 0 y
+desviación estándar
+1}\label{generamos-100-observaciones-aleatorias-normales-con-media-0-y-desviaciuxf3n-estuxe1ndar-1}
+
+\section{Para asegurar
+reproducibilidad}\label{para-asegurar-reproducibilidad}
+
+set.seed(123) data \textless- ts(rnorm(100), frequency = 12) \#
+Visualizamos la serie simulada
+
+plot(data, main = ``Serie Temporal Aleatoria Simulada'', ylab =
+``Valor'', xlab = ``Tiempo'') \# Test de Dickey-Fuller para
+Estacionariedad \# ------------------------------------------
+
+\section{Verifica si la serie tiene una raíz unitaria (es decir, si es
+NO
+estacionaria)}\label{verifica-si-la-serie-tiene-una-rauxedz-unitaria-es-decir-si-es-no-estacionaria}
+
+adf\_test \textless- adf.test(data) print(adf\_test) \# Interpreta el
+resultado: \# - p \textless{} 0.05: rechaza H0 → la serie es
+estacionaria. \# - p \textgreater{} 0.05: no se rechaza H0 → la serie
+podría ser no estacionaria.
+
+\section{------------------------------------------}\label{section}
+
+\section{Ajuste de Modelo AR(1)}\label{ajuste-de-modelo-ar1}
+
+\section{------------------------------------------}\label{section-1}
+
+\section{Ajustamos un modelo ARIMA(p=1, d=0, q=0) → modelo
+AR(1)}\label{ajustamos-un-modelo-arimap1-d0-q0-modelo-ar1}
+
+modelo\_ar \textless- arima(data, order = c(1, 0, 0))
+summary(modelo\_ar) \# ------------------------------------------ \# 6.
+Interpretación de Coeficientes AR \#
+------------------------------------------
+
+\section{Extraemos los coeficientes
+estimados}\label{extraemos-los-coeficientes-estimados}
+
+\section{p-valores}\label{p-valores}
+
+\section{Extraemos los coeficientes
+estimados}\label{extraemos-los-coeficientes-estimados-1}
+
+coef\_ar \textless- modelo\_ar\(coef
+# Calculamos errores estándar a partir de la matriz de varianza-covarianza
+se_ar <- sqrt(diag(modelo_ar\)var.coef)) \# Calculamos valores z
+(coeficiente / error estándar) z\_ar \textless- coef\_ar / se\_ar \#
+Calculamos p-valores asociados p\_ar \textless- 2 * (1 -
+pnorm(abs(z\_ar))) \# Consolidamos resultados en tabla resultados\_ar
+\textless- data.frame(Coefficients = coef\_ar, Std\_Error = se\_ar,
+Z\_value = z\_ar, P\_value = p\_ar) print(resultados\_ar) \# Si el
+p-valor del coeficiente AR \textless{} 0.05, el efecto del rezago es
+estadísticamente significativo. \#
+------------------------------------------ \# Predicción con Modelo AR
+\# ------------------------------------------
+
+\section{Pronosticamos los próximos 10
+periodos}\label{pronosticamos-los-pruxf3ximos-10-periodos}
+
+pred\_ar \textless- predict(modelo\_ar, n.ahead = 10)
+
+\section{Visualizamos la serie original y las
+predicciones}\label{visualizamos-la-serie-original-y-las-predicciones}
+
+ts.plot(data, pred\_ar\$pred, col = c(``black'', ``green''), lty = 1:2,
+main = ``AR(1) - Predicción'', ylab = ``Valores'') \#
+------------------------------------------ \# Ajuste de Modelo ARMA(1,1)
+\# ------------------------------------------
+
+\section{ARIMA(p=1, d=0, q=1): incorpora rezago de valores pasados (AR)
+y errores pasados
+(MA)}\label{arimap1-d0-q1-incorpora-rezago-de-valores-pasados-ar-y-errores-pasados-ma}
+
+modelo\_arma \textless- arima(data, order = c(1, 0, 1))
+summary(modelo\_arma) \# ------------------------------------------ \#
+Predicción con Modelo ARMA \# ------------------------------------------
+
+\section{Pronóstico a 10 pasos
+adelante}\label{pronuxf3stico-a-10-pasos-adelante}
+
+pred\_arma \textless- predict(modelo\_arma, n.ahead = 10) \#
+Visualización opcional ts.plot(data, pred\_arma\$pred, col =
+c(``black'', ``darkgreen''), lty = 1:2, main = ``ARMA(1,1) -
+Predicción'', ylab = ``Valores'')
+
+\section{CASO PRACTICO: Analizaremos la serie macroeconomica mensual
+dolar observado (pesos por
+dolar)}\label{caso-practico-analizaremos-la-serie-macroeconomica-mensual-dolar-observado-pesos-por-dolar}
+
+\section{desde marzo de 1990 a junio de
+2025}\label{desde-marzo-de-1990-a-junio-de-2025}
+
+\#---------------------------------------------- \# Cargar archivo Excel
+previamente importado como `dolar\_obs' \# dolar\_obs \textless-
+read\_excel(``ruta/dolar.xlsx'') \# Reemplaza con tu ruta
+\#--------------------------------------------
+
+\section{renombramos las columnas}\label{renombramos-las-columnas}
+
+colnames(dolar\_obs) \textless- c(``Fecha'', ``Valor'') \# cremos la
+serie temporal, desde donde inicia e indicando su frecuencia mensual
+
+tipo\_cambio \textless- ts(dolar\_obs\$Valor, start = c(1990, 3),
+frequency = 12) \#Graficamos la serie original
+
+plot(tipo\_cambio, main = ``Tipo de cambio nominal (CLP/USD)'', ylab =
+``Pesos por dólar'', xlab = ``Año'')
+\#---------------------------------------------\\
+\# analizamos su ACF y aplicamos el Test-Dickey-Fuller acf(tipo\_cambio)
+adf\_test\_tc \textless- adf.test(tipo\_cambio) print(adf\_test\_tc)
+\#----------------------------------------------- \# cuando una serie es
+de orden I(1) para volver una serie estacionaria de I(0) \# es necesario
+calcular su primera diferencia y volver a testear \# la funcion ndiffs
+nos indica las diferecencia que hay que calcular para que \# la serie se
+vuelva estacionaria ndiffs(diff\_tc)
+\#--------------------------------------------- \# calculamos la primera
+diferencia diff\_tc \textless- diff(tipo\_cambio) \# Graficamos
+plot(diff\_tc) \# obtenemos su funcion de autocorrelación acf(diff\_tc)
+
+\section{probamos estacoionaridad con
+Dickey-Fuller}\label{probamos-estacoionaridad-con-dickey-fuller}
+
+adf\_test\_diff \textless- adf.test(diff\_tc) print(adf\_test\_diff)
+\#-------------------------------------------------- \#análisis visual
+de los graficos de autocorrelacion
+
+par(mfrow = c(2, 2)) plot(tipo\_cambio, ylab = ``CLP/USD'')
+acf(tipo\_cambio, main = ``No Estacionaria'') plot(diff\_tc, ylab =
+``Cambio 1er orden'') acf(diff\_tc, main = ``Estacionaria'') par(mfrow =
+c(1, 1))
+
+\#--------------------------------------------------------------------
+\# Ejemplo con la base uschange, contiene los cambios porcentuales
+trimestrales de variables \# macroeconomicas de EE.UU \# variables:
+Consumo, ingreso, produccion insdustrial, etc. \# para ello instalamos
+el paquete fpp2 para trabajar con modelos ARIMA y \# analisis de series
+temporales multivariadas
+\#---------------------------------------------------
+
+\section{cargamos la data y observamos su
+estructura}\label{cargamos-la-data-y-observamos-su-estructura}
+
+data(``uschange'') str(uschange)
+
+\section{Generamos un grafico con la variable de
+interés}\label{generamos-un-grafico-con-la-variable-de-interuxe9s}
+
+autoplot(uschange{[}, ``Consumption''{]}) + ggtitle(``Cambio \%
+trimestral en consumo (EE.UU.)'') + ylab(``\% cambio'') + xlab(``Año'')
+\# ----------------------------------------------- \# como uschange esta
+expresada en diferencias porcentuales, por lo tanto \# suele ser
+estacionaria, comprebemos estacioonaridad (ACF + ADF)
+
+par(mfrow = c(1, 2)) plot(uschange{[}, ``Consumption''{]}, main =
+``Serie de consumo'') acf(uschange{[}, ``Consumption''{]}) par(mfrow =
+c(1, 1))
+
+\section{usamos Dickey-Fuller para confirmar
+estacionaridad}\label{usamos-dickey-fuller-para-confirmar-estacionaridad}
+
+adf.test(uschange{[}, ``Consumption''{]})
+
+\#-----------------------------------------------------
+
+\section{ya que confirmamos estacionaridad, podemos ajustar un modelo
+ARIMA (p, d,
+q)}\label{ya-que-confirmamos-estacionaridad-podemos-ajustar-un-modelo-arima-p-d-q}
+
+modelo\_consumo \textless- auto.arima(uschange{[}, ``Consumption''{]})
+summary(modelo\_consumo)
+\#------------------------------------------------------ \# Validamos
+supuestos del modelo \# buscamos que: \# ACF de los residuos no tengan
+autocorrelacion \# Histograma se aproxime a normal \# p-value del test
+Ljung-Box \textgreater{} 0,05 (residuos ≈ ruido blanco)
+
+checkresiduals(modelo\_consumo)
+\#-----------------------------------------
+
+\section{Generar pronóstico para próximos 8 trimestres (2
+años)}\label{generar-pronuxf3stico-para-pruxf3ximos-8-trimestres-2-auxf1os}
+
+forecast\_consumo \textless- forecast(modelo\_consumo, h = 8)
+
+\section{Visualizamos los resultados}\label{visualizamos-los-resultados}
+
+autoplot(forecast\_consumo) + ggtitle(``Pronóstico de consumo
+(EE.UU.)'') + ylab(``Cambio \% trimestral'')
+
+install.packages(``tinytex'') tinytex::install\_tinytex()
+
+\end{document}
